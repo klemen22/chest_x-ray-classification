@@ -1,0 +1,22 @@
+Model summary for: models/ProsimDelaj.pth
+
+Best accuracy: 44.39
+Best loss: 1.16
+Total training time: 41.10s
+
+Confusion matrix:
+[[235   7   0]
+ [192  42   0]
+ [143   5   0]]
+
+Classification report:
+              precision    recall  f1-score   support
+
+      NORMAL       0.41      0.97      0.58       242
+   BACTERIAL       0.78      0.18      0.29       234
+       VIRAL       0.00      0.00      0.00       148
+
+    accuracy                           0.44       624
+   macro avg       0.40      0.38      0.29       624
+weighted avg       0.45      0.44      0.33       624
+

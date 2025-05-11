@@ -1,0 +1,252 @@
+# ------------------------------------------------------------------------#
+#                                 Imports                                 #
+# ------------------------------------------------------------------------#
+
+
+import os
+from trainEval import trainModel
+import inquirer
+import time
+import keyboard
+from model import NeuralModel, saveModel, loadModel
+import curses
+
+titleSize = 80
+titleSizeTemp = int((titleSize - 26) / 2)
+
+
+# ------------------------------------------------------------------------#
+#                              Clear screen                               #
+# ------------------------------------------------------------------------#
+
+
+def clearScreen(title=False):
+    os.system("cls" if os.name == "nt" else "clear")
+
+    if title:
+        printTitle()
+
+
+# ------------------------------------------------------------------------#
+#                              Print title                                #
+# ------------------------------------------------------------------------#
+
+
+def printTitle():
+    print("#" + "-" * titleSize + "#")
+    print(
+        "#"
+        + " " * titleSizeTemp
+        + "Chest X-ray Classification"
+        + " " * titleSizeTemp
+        + "#"
+    )
+    print("#" + "-" * titleSize + "#\n")
+
+
+# ------------------------------------------------------------------------#
+#                              Main menu                                  #
+# ------------------------------------------------------------------------#
+
+
+def mainMenu():
+    clearScreen(title=True)
+    selection = [
+        inquirer.List(
+            "option",
+            message="Select an option",
+            choices=["Train model", "Create new model", "Delete model", "Exit"],
+        )
+    ]
+    answer = inquirer.prompt(selection)
+    return answer["option"]
+
+
+# ------------------------------------------------------------------------#
+#                         Submenu - Create model                          #
+# ------------------------------------------------------------------------#
+
+
+def submenuCreate():
+    clearScreen(title=True)
+
+    modelName = input("Enter model name: ")  # get model name
+    model = NeuralModel(classNum=3)  # create new model
+
+    saveModel(model, f"models/{modelName}.pth")  # save model to "models" folder
+    # print(f"Model {modelName} was created and saved")
+
+    print("\n\nPress BACKSPACE to return")
+    while True:
+        key = keyboard.read_key()
+        if key == "backspace":
+            break
+
+
+# ------------------------------------------------------------------------#
+#                        Submenu - Display models                         #
+# ------------------------------------------------------------------------#
+
+
+def listModels():
+
+    modelList = []
+
+    if not os.path.exists("models"):  # check for "models" folder
+        print("Error: folder 'models' doesn't exist")
+        time.sleep(2)
+        return modelList
+
+    if len(os.listdir("models")) == 0:  # check if folder is empty
+        print("Folder is empty")
+        print("\n Create new model first")
+        time.sleep(2)
+        return modelList
+
+    for model in os.listdir("models"):
+        if model.endswith(".pth"):
+            modelList.append(model)
+
+    return modelList
+
+
+# ------------------------------------------------------------------------#
+#                          Submenu - Select model                         #
+# ------------------------------------------------------------------------#
+
+
+def selectModel(modelList):
+
+    question = [
+        inquirer.List("selectedModel", message="Select a model", choices=modelList)
+    ]
+    answer = inquirer.prompt(question)
+    return answer["selectedModel"]
+
+
+# ------------------------------------------------------------------------#
+#                          Submenu - Train model                          #
+# ------------------------------------------------------------------------#
+
+
+def submenuTrain():
+
+    modelList = listModels()  # get list of models
+
+    if len(modelList) != 0:
+        selectedModel = selectModel(modelList)
+        print(f"Selected model: {selectedModel}")  # debug
+        batchSize, epochs, learnRate = getParameters()
+        clearScreen(title=True)
+        # print(f"Parameters: {batchSize}, {epochs}, {learnRate}")
+        trainModel(
+            modelPath=f"models/{selectedModel}",
+            batchSize=int(batchSize),
+            epochs=int(epochs),
+            learnRate=float(learnRate),
+        )
+
+    print("\n\nPress BACKSPACE to return")
+    while True:
+        key = keyboard.read_key()
+        if key == "backspace":
+            break
+
+
+# ------------------------------------------------------------------------#
+#                       Submenu - Get parameters                          #
+# ------------------------------------------------------------------------#
+
+
+def getParameters():
+    clearScreen(title=True)
+    batchSize = input("Enter batch size: ")
+    while not batchSize.isdigit():  # check if input is a number
+        print("Batch size must be a number!")
+        batchSize = input("\nEnter batch size: ")
+
+    epochs = input("\nEnter number of epochs: ")
+    while not epochs.isdigit():
+        print("Epochs must be a number!")
+        epochs = input("\nEnter number of epochs: ")
+
+    learnRate = input("\nEnter learning rate: ")
+    while not learnRate.replace(".", "", 1).isdigit():
+        print("Learning rate must be a number!")
+        learnRate = input("\nEnter learning rate: ")
+
+    return batchSize, epochs, learnRate
+
+
+# ------------------------------------------------------------------------#
+#                          Submenu - Delete model                         #
+# ------------------------------------------------------------------------#
+
+
+def submenuDelete():
+    clearScreen(title=True)
+    modelList = listModels()  # get list of models
+    modelList.append("Exit")  # add "Exit" option
+
+    selectedModel = selectModel(modelList)
+    # print(f"Selected model: {selectedModel}")  # debug
+
+    if selectedModel == "Exit":
+        return
+
+    choice = makeYourChoice(selectedModel)
+
+    match choice:
+        case "Yes":
+            os.remove(f"models/{selectedModel}")
+            print(f"Model {selectedModel} was deleted")
+            submenuDelete()
+        case "No":
+            submenuDelete()
+
+
+# ------------------------------------------------------------------------#
+#                          Submenu - Delete model                         #
+# ------------------------------------------------------------------------#
+
+
+def makeYourChoice(selectedModel):
+    clearScreen(title=True)
+    question = [
+        inquirer.List(
+            "selectedModel",
+            message=f"Are you sure you want to delete {selectedModel} model?",
+            choices=["Yes", "No"],
+        )
+    ]
+    answer = inquirer.prompt(question)
+    return answer["selectedModel"]
+
+
+# ------------------------------------------------------------------------#
+#                               Main code                                 #
+# ------------------------------------------------------------------------#
+
+
+def main():
+    clearScreen(title=True)  # First clear the screen and print title
+
+    while True:
+        selection = mainMenu()  # Print main menu
+
+        match selection:
+            case "Create new model":
+                submenuCreate()
+            case "Train model":
+                clearScreen(title=True)
+                submenuTrain()
+            case "Delete model":
+                clearScreen(title=True)
+                submenuDelete()
+            case "Exit":
+                print("Ending the program...")
+                return
+
+
+if __name__ == "__main__":
+    main()

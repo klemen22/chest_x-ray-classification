@@ -4,7 +4,7 @@ import torchvision.models as models
 import os
 
 # ------------------------------------------------------------------------#
-#                       Create  EfficientNet model                        #
+#                       Create EfficientNet model                         #
 # ------------------------------------------------------------------------#
 
 

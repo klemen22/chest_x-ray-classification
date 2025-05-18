@@ -87,7 +87,7 @@ def evaluateModel(model, testLoader, criterionFun, device):
     # classAccuracy = classCorrect / classTotal * 100
     weightedLoss = loss / len(testLoader)
 
-    # TEMP - print accuracy per class - FIX IT
+    # TEMP - print accuracy per class
     # print("\nAccuracy per class:")
     # for i, name in enumerate(className):
     #    print(f"Accuracy for class {name}: {classAccuracy[i]:.2f}%")
@@ -177,10 +177,10 @@ def trainModel(
     learnRate=0.01,
 ):
     titleSize = 80
-    titleSizeTemp = int((titleSize - 10) / 2)
+    titleSizeTemp = int((titleSize - 14) / 2)
     titleSizeTemp2 = int((titleSize - 8) / 2)
     stdscr.addstr(
-        4, 0, f"<" + titleSizeTemp * "-" + "Train Mode" + titleSizeTemp * "-" + ">"
+        4, 0, f"<" + titleSizeTemp * "-" + "Training  Mode" + titleSizeTemp * "-" + ">"
     )
 
     # cuda check

@@ -2,7 +2,6 @@
 #                                 Imports                                 #
 # ------------------------------------------------------------------------#
 
-
 import os
 from trainEval import trainModel
 import time
@@ -11,6 +10,9 @@ import curses
 from PIL import Image
 from torchvision import transforms
 import torch
+import subprocess
+import sys
+import os
 
 
 # ------------------------------------------------------------------------#
@@ -472,7 +474,6 @@ def loadTestImages(valPath):
     for root, _, files in os.walk(valPath):
         for file in files:
             if file.endswith(".jpeg"):
-                image = Image.open(os.path.join(root, file))
                 images.append(os.path.join(root, file))
 
     return images
@@ -605,4 +606,31 @@ def main(stdscr):
 
 
 if __name__ == "__main__":
+    if os.environ.get("RUNNING_IN_NEW_POWERSHELL") != "1":
+        script_path = os.path.abspath(sys.argv[0])
+
+        powershell_command = (
+            f"$Env:RUNNING_IN_NEW_POWERSHELL=1; "
+            f"$Host.UI.RawUI.BufferSize = New-Object Management.Automation.Host.Size(120,60); "
+            f"$Host.UI.RawUI.WindowSize = New-Object Management.Automation.Host.Size(120,60); "
+            f'python "{script_path}"; '
+            'Read-Host "Press Enter to exit..."'
+        )
+
+        subprocess.Popen(
+            [
+                "cmd.exe",
+                "/c",
+                "start",
+                "powershell.exe",
+                "-NoExit",
+                "-Command",
+                powershell_command,
+            ]
+        )
+
+        sys.exit(0)
+
+    import curses
+
     curses.wrapper(main)

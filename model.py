@@ -1,7 +1,7 @@
 import torch
 import torch.nn as nn
-import torchvision.models as models
 import os
+from torchvision.models import efficientnet_b0, EfficientNet_B0_Weights
 
 # ------------------------------------------------------------------------#
 #                       Create EfficientNet model                         #
@@ -13,7 +13,8 @@ class NeuralModel(nn.Module):
         super().__init__()
 
         # load pretrained model
-        self.model = models.efficientnet_b0()
+        weights = EfficientNet_B0_Weights.DEFAULT
+        self.model = efficientnet_b0(weights=weights)
 
         # disable feature extraction layers
         for param in list(self.model.features.parameters())[:5]:

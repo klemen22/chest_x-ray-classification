@@ -67,7 +67,8 @@ def sortImages(source, dest, folders):
     for folder in folders:
         pathTemp = os.path.join(source, folder, "NORMAL")
         pathDestination = os.path.join(dest, folder, "NORMAL")
-        shutil.move(pathTemp, pathDestination)
+        for image in glob.glob(os.path.join(pathTemp, "*.jpeg")):
+            shutil.move(image, os.path.join(pathDestination, os.path.basename(image)))
 
 
 # ------------------------------------------------------------------------#

@@ -1,0 +1,22 @@
+Model summary for: models/ModelV4.pth
+
+Best accuracy: 90.06
+Best loss: 0.32
+Total training time: 3376.95
+
+Confusion matrix:
+[[229   2  11]
+ [  7 203  24]
+ [ 29   4 115]]
+
+Classification report:
+              precision    recall  f1-score   support
+
+      NORMAL       0.86      0.95      0.90       242
+   BACTERIAL       0.97      0.87      0.92       234
+       VIRAL       0.77      0.78      0.77       148
+
+    accuracy                           0.88       624
+   macro avg       0.87      0.86      0.86       624
+weighted avg       0.88      0.88      0.88       624
+

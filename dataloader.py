@@ -63,8 +63,9 @@ def loadData(dataPath, batchSize):
     trainLoader = torch.utils.data.DataLoader(
         trainData, batch_size=batchSize, sampler=sampler, num_workers=4
     )
+    # put shuffle to false in "testLoader" to fix accuracy in classification_report() function
     testLoader = torch.utils.data.DataLoader(
-        testData, batch_size=batchSize, shuffle=True, num_workers=4
+        testData, batch_size=batchSize, shuffle=False, num_workers=4
     )
     valLoader = torch.utils.data.DataLoader(
         valData, batch_size=batchSize, shuffle=True, num_workers=4

@@ -208,7 +208,7 @@ def trainModel(
 
     # define optimizer
     # optimizer = optim.SGD(model.parameters(), lr=learnRate)
-    optimizer = optim.Adam(model.parameters(), lr=0.001)  # testing new optimizer
+    optimizer = optim.Adam(model.parameters(), lr=learnRate)  # testing new optimizer
     scheduler = optim.lr_scheduler.StepLR(
         optimizer, step_size=10, gamma=0.5
     )  # testing scheduler
